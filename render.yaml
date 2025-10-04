@@ -5,7 +5,8 @@ services:
     plan: free
     buildCommand: npm ci && npm run build:render
     startCommand: npm start
-    healthCheckPath: /api
+    healthCheckPath: /api/health
+    autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
@@ -19,8 +20,12 @@ services:
       - key: VITE_WASABI_SECRET_KEY
         value: gvUKDkltN9ICqpKs9e5i517lHpm5mbHZ8XBXMQoJ
       - key: VITE_WASABI_REGION
-        value: eu-central-2
+        value: us-central-1
       - key: VITE_WASABI_BUCKET
-        value: your_bucket_name
+        value: videosplus-gemilson-2024
       - key: VITE_WASABI_ENDPOINT
-        value: https://s3.eu-central-2.wasabisys.com
+        value: https://s3.us-central-1.wasabisys.com
+      - key: VITE_STRIPE_PUBLISHABLE_KEY
+        value: ""
+      - key: VITE_API_URL
+        value: https://videosplus.onrender.com
