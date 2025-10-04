@@ -3,7 +3,7 @@ services:
     name: videosplus
     env: node
     plan: free
-    buildCommand: npm ci && npm run build:render
+    buildCommand: rm -rf dist && npm ci && npm run build:render
     startCommand: npm start
     healthCheckPath: /api/health
     autoDeploy: true
