@@ -14,10 +14,10 @@
   "emailPass": "",
   "emailFrom": "",
   "wasabiConfig": {
-    "accessKey": "HLTQLL4K502MD1H2A7CC",
-    "secretKey": "gvUKDkltN9ICqpKs9e5i517lHpm5mbHZ8XBXMQoJ",
+    "accessKey": "MG6BCFEBPI30TV9J5QJB",
+    "secretKey": "8stlTUnBbB0WaQte9T7zo1iJTANYVeA9j9TFQAw8",
     "region": "us-central-1",
-    "bucket": "videosplus-gemilson-2024",
+    "bucket": "videosplus-2024",
     "endpoint": "https://s3.us-central-1.wasabisys.com"
   }
 }

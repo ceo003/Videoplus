@@ -16,13 +16,13 @@ services:
         value: https://videosplus.onrender.com
       # Wasabi Configuration (configure these in Render dashboard)
       - key: VITE_WASABI_ACCESS_KEY
-        value: HLTQLL4K502MD1H2A7CC
+        value: MG6BCFEBPI30TV9J5QJB
       - key: VITE_WASABI_SECRET_KEY
-        value: gvUKDkltN9ICqpKs9e5i517lHpm5mbHZ8XBXMQoJ
+        value: 8stlTUnBbB0WaQte9T7zo1iJTANYVeA9j9TFQAw8
       - key: VITE_WASABI_REGION
         value: us-central-1
       - key: VITE_WASABI_BUCKET
-        value: videosplus-gemilson-2024
+        value: videosplus-2024
       - key: VITE_WASABI_ENDPOINT
         value: https://s3.us-central-1.wasabisys.com
       - key: VITE_STRIPE_PUBLISHABLE_KEY

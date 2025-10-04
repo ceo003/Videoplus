@@ -12,16 +12,16 @@ dotenv.config();
 class WasabiDataInitializer {
   constructor() {
     this.s3Client = new S3Client({
-      region: process.env.VITE_WASABI_REGION || 'us-central-1',
-      endpoint: process.env.VITE_WASABI_ENDPOINT || 'https://s3.us-central-1.wasabisys.com',
+      region: 'us-central-1',
+      endpoint: 'https://s3.us-central-1.wasabisys.com',
       credentials: {
-        accessKeyId: process.env.VITE_WASABI_ACCESS_KEY || '',
-        secretAccessKey: process.env.VITE_WASABI_SECRET_KEY || '',
+        accessKeyId: 'MG6BCFEBPI30TV9J5QJB',
+        secretAccessKey: '8stlTUnBbB0WaQte9T7zo1iJTANYVeA9j9TFQAw8',
       },
       forcePathStyle: true,
     });
     
-    this.bucket = process.env.VITE_WASABI_BUCKET || 'videosplus-gemilson-2024';
+    this.bucket = 'videosplus-2024';
     this.metadataKey = 'metadata/videosplus-data.json';
   }
 
