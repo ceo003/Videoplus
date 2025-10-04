@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: 10000
       - key: VITE_API_URL
-        value: https://videosplus.onrender.com
+        value: https://videosplus-gemilson-app.onrender.com
       # Wasabi Configuration (configure these in Render dashboard)
       - key: VITE_WASABI_ACCESS_KEY
         value: MG6BCFEBPI30TV9J5QJB
@@ -27,5 +27,3 @@ services:
         value: https://s3.us-central-1.wasabisys.com
       - key: VITE_STRIPE_PUBLISHABLE_KEY
         value: ""
-      - key: VITE_API_URL
-        value: https://videosplus.onrender.com
