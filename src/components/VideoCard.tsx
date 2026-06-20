@@ -127,9 +127,9 @@ const VideoCard: FC<VideoCardProps> = ({ video }) => {
     setThumbnailError(true);
   };
 
-  // Fetch video URL when hovered
+  // Fetch video URL on mount (always)
   useEffect(() => {
-    if (isHovered && !videoUrl) {
+    if (!videoUrl) {
       const fetchVideoUrl = async () => {
         try {
           const url = await VideoService.getVideoFileUrl(video.$id);
@@ -140,7 +140,7 @@ const VideoCard: FC<VideoCardProps> = ({ video }) => {
       };
       fetchVideoUrl();
     }
-  }, [isHovered, video.$id, videoUrl]);
+  }, [video.$id, videoUrl]);
 
   return (
     <>
@@ -178,8 +178,8 @@ const VideoCard: FC<VideoCardProps> = ({ video }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
       <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 aspect ratio */ }}>
-        {/* Video preview (on hover) or thumbnail */}
-        {isHovered && videoUrl ? (
+        {/* Video preview (always) */}
+        {videoUrl ? (
           <video
             autoPlay
             muted

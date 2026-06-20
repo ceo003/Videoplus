@@ -40,6 +40,9 @@ export interface SiteConfigData {
   paypalMeUsername: string;
   stripePublishableKey: string;
   stripeSecretKey: string;
+  whopCompanyApiKey?: string;
+  whopCompanyId?: string;
+  whopWebhookSecret?: string;
   telegramUsername: string;
   videoListTitle: string;
   crypto: any[];
@@ -117,6 +120,9 @@ class WasabiMetadataService {
           paypalMeUsername: '',
           stripePublishableKey: '',
           stripeSecretKey: '',
+          whopCompanyApiKey: '',
+          whopCompanyId: '',
+          whopWebhookSecret: '',
           telegramUsername: '',
           videoListTitle: 'Available Videos',
           crypto: [],

@@ -9,6 +9,9 @@ interface SiteConfig {
   paypal_me_username?: string; // For PayPal.me integration
   stripe_publishable_key: string;
   stripe_secret_key: string;
+  whop_company_api_key?: string;
+  whop_company_id?: string;
+  whop_webhook_secret?: string;
   telegram_username: string;
   video_list_title?: string;
   crypto?: string[];
@@ -34,6 +37,9 @@ interface SiteConfigContextType {
   paypalMeUsername: string; // For PayPal.me integration
   stripePublishableKey: string;
   stripeSecretKey: string;
+  whopCompanyApiKey: string;
+  whopCompanyId: string;
+  whopWebhookSecret: string;
   telegramUsername: string;
   videoListTitle: string;
   cryptoWallets: string[];
@@ -64,6 +70,9 @@ const SiteConfigContext = createContext<SiteConfigContextType>({
   paypalMeUsername: '',
   stripePublishableKey: '',
   stripeSecretKey: '',
+  whopCompanyApiKey: '',
+  whopCompanyId: '',
+  whopWebhookSecret: '',
   telegramUsername: '',
   videoListTitle: 'Available Videos',
   cryptoWallets: [],
@@ -102,6 +111,9 @@ export const SiteConfigProvider = ({ children }: { children: ReactNode }) => {
       paypal_me_username: data.paypalMeUsername,
       stripe_publishable_key: data.stripePublishableKey,
       stripe_secret_key: data.stripeSecretKey,
+      whop_company_api_key: data.whopCompanyApiKey,
+      whop_company_id: data.whopCompanyId,
+      whop_webhook_secret: data.whopWebhookSecret,
       telegram_username: data.telegramUsername,
       video_list_title: data.videoListTitle,
       crypto: data.crypto,
@@ -152,6 +164,9 @@ export const SiteConfigProvider = ({ children }: { children: ReactNode }) => {
           paypal_me_username: '',
           stripe_publishable_key: '',
           stripe_secret_key: '',
+          whop_company_api_key: '',
+          whop_company_id: '',
+          whop_webhook_secret: '',
           telegram_username: '',
           video_list_title: 'Available Videos',
           crypto: [],
@@ -222,6 +237,9 @@ export const SiteConfigProvider = ({ children }: { children: ReactNode }) => {
     paypalMeUsername: config?.paypal_me_username || '',
     stripePublishableKey: config?.stripe_publishable_key || '',
     stripeSecretKey: config?.stripe_secret_key || '',
+    whopCompanyApiKey: config?.whop_company_api_key || '',
+    whopCompanyId: config?.whop_company_id || '',
+    whopWebhookSecret: config?.whop_webhook_secret || '',
     telegramUsername: config?.telegram_username || '',
     videoListTitle: config?.video_list_title || 'Available Videos',
     cryptoWallets: config?.crypto || [],

@@ -137,6 +137,9 @@ interface SiteConfig {
   paypal_me_username?: string;
   stripe_publishable_key: string;
   stripe_secret_key: string;
+  whop_company_api_key?: string;
+  whop_company_id?: string;
+  whop_webhook_secret?: string;
   telegram_username: string;
   video_list_title?: string;
   crypto?: string[];
@@ -220,6 +223,11 @@ const Admin: FC = () => {
   const [wasabiRegion, setWasabiRegion] = useState('');
   const [wasabiBucket, setWasabiBucket] = useState('');
   const [wasabiEndpoint, setWasabiEndpoint] = useState('');
+  
+  // Whop config state
+  const [whopCompanyApiKey, setWhopCompanyApiKey] = useState('');
+  const [whopCompanyId, setWhopCompanyId] = useState('');
+  const [whopWebhookSecret, setWhopWebhookSecret] = useState('');
   
   // Available cryptocurrencies
   const cryptoCurrencies = [
@@ -358,6 +366,9 @@ const Admin: FC = () => {
           paypal_me_username: configData.paypalMeUsername,
           stripe_publishable_key: configData.stripePublishableKey,
           stripe_secret_key: configData.stripeSecretKey,
+          whop_company_api_key: configData.whopCompanyApiKey,
+          whop_company_id: configData.whopCompanyId,
+          whop_webhook_secret: configData.whopWebhookSecret,
           telegram_username: configData.telegramUsername,
           video_list_title: configData.videoListTitle,
           crypto: configData.crypto
@@ -369,6 +380,9 @@ const Admin: FC = () => {
         setPaypalMeUsername(config.paypal_me_username || '');
         setStripePublishableKey(config.stripe_publishable_key || '');
         setStripeSecretKey(config.stripe_secret_key || '');
+        setWhopCompanyApiKey(config.whop_company_api_key || '');
+        setWhopCompanyId(config.whop_company_id || '');
+        setWhopWebhookSecret(config.whop_webhook_secret || '');
         setTelegramUsername(config.telegram_username);
         setVideoListTitle(config.video_list_title || 'Available Videos');
         setCryptoWallets(config.crypto || []);
@@ -599,6 +613,9 @@ const Admin: FC = () => {
         paypalMeUsername: paypalMeUsername,
         stripePublishableKey: stripePublishableKey,
         stripeSecretKey: stripeSecretKey,
+        whopCompanyApiKey: whopCompanyApiKey,
+        whopCompanyId: whopCompanyId,
+        whopWebhookSecret: whopWebhookSecret,
         telegramUsername: telegramUsername,
         videoListTitle: videoListTitle,
         crypto: cryptoWallets,
@@ -999,6 +1016,35 @@ const Admin: FC = () => {
                     type="password"
                     value={stripeSecretKey}
                     onChange={(e) => setStripeSecretKey(e.target.value)}
+                    variant="outlined"
+                    sx={{ mb: 2 }}
+                  />
+                  
+                  <TextField
+                    fullWidth
+                    label="Whop Company API Key"
+                    type="password"
+                    value={whopCompanyApiKey}
+                    onChange={(e) => setWhopCompanyApiKey(e.target.value)}
+                    variant="outlined"
+                    sx={{ mb: 2 }}
+                  />
+                  
+                  <TextField
+                    fullWidth
+                    label="Whop Company ID"
+                    value={whopCompanyId}
+                    onChange={(e) => setWhopCompanyId(e.target.value)}
+                    variant="outlined"
+                    sx={{ mb: 2 }}
+                  />
+                  
+                  <TextField
+                    fullWidth
+                    label="Whop Webhook Secret"
+                    type="password"
+                    value={whopWebhookSecret}
+                    onChange={(e) => setWhopWebhookSecret(e.target.value)}
                     variant="outlined"
                     sx={{ mb: 2 }}
                   />

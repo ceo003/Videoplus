@@ -301,13 +301,14 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
           {truncatedDescription}
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
           <Button
             component={Link}
             to={`/video/${featuredVideo.$id}`}
             variant="contained"
             size="large"
             startIcon={<PlayArrowIcon />}
+            fullWidth
             sx={{
               bgcolor: '#FF0F50',
               color: 'white',
@@ -330,6 +331,7 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
             variant="contained"
             size="large"
             startIcon={<InfoIcon />}
+            fullWidth
             sx={{
               bgcolor: 'rgba(25, 25, 25, 0.8)',
               color: 'white',
