@@ -801,4 +801,51 @@ router.post('/upload/:folder', upload.single('file'), async (req, res) => {
   }
 });
 
+// ===== WHOP WEBHOOK =====
+router.post('/whop/webhook', express.json({ type: 'application/json' }), async (req, res) => {
+  try {
+    console.log('Whop webhook received:', req.body);
+    
+    // Carregar configurações do site para pegar o webhook secret
+    const siteConfig = await wasabiBackendService.getSiteConfig();
+    const whopWebhookSecret = siteConfig.whopWebhookSecret;
+    
+    // Verificar a assinatura do webhook (para segurança)
+    const whopSignature = req.headers['x-whop-signature'];
+    
+    if (whopWebhookSecret && whopSignature) {
+      // Aqui você pode implementar a verificação da assinatura usando o secret
+      console.log('Whop signature received');
+    }
+    
+    // Processar o evento do Whop
+    const eventType = req.body.event;
+    const eventData = req.body.data;
+    
+    switch (eventType) {
+      case 'membership.paid':
+        console.log('Payment successful!', eventData);
+        // Lógica para liberar acesso ao vídeo
+        // 1. Identificar o usuário que fez o pagamento (email, id, etc.)
+        // 2. Marcar o vídeo como comprado para esse usuário
+        break;
+        
+      case 'membership.cancelled':
+        console.log('Membership cancelled', eventData);
+        // Lógica para revogar acesso (opcional)
+        break;
+        
+      default:
+        console.log('Unhandled Whop event:', eventType);
+    }
+    
+    // Responder com sucesso para o Whop
+    res.status(200).json({ received: true });
+    
+  } catch (error) {
+    console.error('Error processing Whop webhook:', error);
+    res.status(500).json({ error: 'Failed to process webhook' });
+  }
+});
+
 export default router;

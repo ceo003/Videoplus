@@ -1048,6 +1048,15 @@ const Admin: FC = () => {
                     variant="outlined"
                     sx={{ mb: 2 }}
                   />
+                  
+                  <Alert severity="info" sx={{ mb: 2 }}>
+                    <Typography variant="body2">
+                      <strong>Whop Webhook URL:</strong> <code>{import.meta.env.VITE_API_URL || window.location.origin}/api/whop/webhook</code>
+                    </Typography>
+                    <Typography variant="caption">
+                      Cole esta URL na configuração de Webhook no painel do Whop.
+                    </Typography>
+                  </Alert>
                 </Grid>
 
                 {/* Email Settings */}
