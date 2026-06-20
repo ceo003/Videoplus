@@ -15,6 +15,7 @@ interface FeaturedBannerProps {
 
 const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
   const [featuredVideo, setFeaturedVideo] = useState<Video | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [allVideos, setAllVideos] = useState<Video[]>([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -61,6 +62,9 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
           const selectedVideo = getVideoForCurrentInterval(videos);
           if (selectedVideo) {
             setFeaturedVideo(selectedVideo);
+            // Get video file URL
+            const url = await VideoService.getVideoFileUrl(selectedVideo.$id);
+            setVideoUrl(url);
           }
         }
       } else {
@@ -68,6 +72,9 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
         const selectedVideo = getVideoForCurrentInterval(allVideos);
         if (selectedVideo) {
           setFeaturedVideo(selectedVideo);
+          // Get video file URL
+          const url = await VideoService.getVideoFileUrl(selectedVideo.$id);
+          setVideoUrl(url);
         }
       }
     } catch (error) {
@@ -195,7 +202,7 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
         </Typography>
       </Box>
 
-      {/* Background image (thumbnail) with gradient overlay */}
+      {/* Background video with gradient overlay */}
       <Box
         sx={{
           position: 'absolute',
@@ -203,9 +210,6 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundImage: `url(${featuredVideo.thumbnailUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
           filter: 'brightness(0.85)',
           '&::after': {
             content: '""',
@@ -215,6 +219,7 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
             width: '100%',
             height: '100%',
             background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.4) 100%)',
+            zIndex: 1,
           },
           '&::before': {
             content: '""',
@@ -224,10 +229,28 @@ const FeaturedBanner = ({ onError }: FeaturedBannerProps) => {
             width: '100%',
             height: '100%',
             background: 'linear-gradient(90deg, rgba(255,15,80,0.15) 0%, rgba(0,0,0,0) 100%)',
-            zIndex: 1,
+            zIndex: 2,
           }
         }}
-      />
+      >
+        {videoUrl && (
+          <video
+            autoPlay
+            muted
+            playsInline
+            loop
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+            src={videoUrl}
+            poster={featuredVideo.thumbnailUrl}
+          >
+            Your browser does not support the video tag.
+          </video>
+        )}
+      </Box>
 
       {/* Banner content */}
       <Box

@@ -33,6 +33,12 @@ export class VideoService {
   private static videosCache: Video[] | null = null;
   private static cacheTimestamp: number = 0;
   private static readonly CACHE_DURATION = 30 * 1000; // 30 segundos (reduzido para produção)
+  
+  // Multiplicador de visualizações fakes (ajuste este valor para aumentar as visualizações)
+  private static readonly FAKE_VIEWS_MULTIPLIER = 100; // Multiplica as visualizações reais por 100
+  
+  // Valor mínimo de visualizações fakes por vídeo (10k-20k aleatório)
+  private static readonly MIN_FAKE_VIEWS = 10000;
 
   // Método para limpar o cache
   private static clearCache(): void {
@@ -79,6 +85,12 @@ export class VideoService {
       }
     }
     
+    // Calcular visualizações fakes: min 10k + 0 a 10k aleatório = total 10k a 20k
+    const realViews = videoData.views || 0;
+    let fakeViews = realViews * this.FAKE_VIEWS_MULTIPLIER;
+    fakeViews += Math.floor(Math.random() * 10000); // Adicionar 0 a 10k para variar entre 10k e 20k
+    fakeViews = Math.max(fakeViews, this.MIN_FAKE_VIEWS); // Garantir que não fique abaixo de 10k
+    
     return {
       $id: videoData.id,
       title: videoData.title,
@@ -92,7 +104,7 @@ export class VideoService {
       thumbnailUrl: videoData.thumbnailUrl,
       isPurchased: videoData.isPurchased || false,
       createdAt: videoData.createdAt,
-      views: videoData.views,
+      views: fakeViews,
       product_link: videoData.productLink || ''
     };
   }

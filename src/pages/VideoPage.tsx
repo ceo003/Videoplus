@@ -239,6 +239,9 @@ const VideoPage: FC = () => {
                     backgroundColor: '#000'
                   }}
                   src={videoUrl}
+                  muted
+                  playsInline
+                  loop
                 >
                   Your browser does not support the video tag.
                 </video>

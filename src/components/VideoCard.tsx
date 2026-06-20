@@ -33,6 +33,7 @@ const VideoCard: FC<VideoCardProps> = ({ video }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isThumbnailLoading, setIsThumbnailLoading] = useState(true);
   const [thumbnailError, setThumbnailError] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   
   const handleCardClick = async () => {
     try {
@@ -126,6 +127,21 @@ const VideoCard: FC<VideoCardProps> = ({ video }) => {
     setThumbnailError(true);
   };
 
+  // Fetch video URL when hovered
+  useEffect(() => {
+    if (isHovered && !videoUrl) {
+      const fetchVideoUrl = async () => {
+        try {
+          const url = await VideoService.getVideoFileUrl(video.$id);
+          setVideoUrl(url);
+        } catch (error) {
+          console.error('Error fetching video URL for preview:', error);
+        }
+      };
+      fetchVideoUrl();
+    }
+  }, [isHovered, video.$id, videoUrl]);
+
   return (
     <>
       {/* Add CSS animation for pulse effect */}
@@ -162,8 +178,28 @@ const VideoCard: FC<VideoCardProps> = ({ video }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
       <Box sx={{ position: 'relative', paddingTop: '56.25%' /* 16:9 aspect ratio */ }}>
-        {/* Thumbnail image */}
-        {video.thumbnailUrl && !thumbnailError ? (
+        {/* Video preview (on hover) or thumbnail */}
+        {isHovered && videoUrl ? (
+          <video
+            autoPlay
+            muted
+            playsInline
+            loop
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              backgroundColor: '#0A0A0A',
+            }}
+            src={videoUrl}
+            poster={video.thumbnailUrl}
+          >
+            Your browser does not support the video tag.
+          </video>
+        ) : video.thumbnailUrl && !thumbnailError ? (
           <CardMedia
             component="img"
             image={video.thumbnailUrl}
