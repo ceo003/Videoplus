@@ -213,6 +213,7 @@ const VideoPage: FC = () => {
               videoId={video.$id}
               videoTitle={video.title}
               price={video.price}
+              whopProductId={video.whopProductId}
               disabled={hasPurchased}
             />
             

@@ -841,10 +841,29 @@ router.post('/whop/create-checkout', express.json(), async (req, res) => {
       return res.status(404).json({ error: 'Video not found' });
     }
     
+    // Se o vídeo tem um Whop Product ID configurado, usar diretamente
+    if (video.whopProductId) {
+      console.log(`✅ Using existing Whop Product ID: ${video.whopProductId}`);
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      res.json({
+        success: true,
+        sessionId: video.whopProductId,
+        orderId: orderId,
+        checkoutUrl: `https://whop.com/checkout/${video.whopProductId}`,
+        video: {
+          id: video.id,
+          title: video.title,
+          price: video.price,
+        },
+      });
+      return;
+    }
+    
     // Preço em centavos (ex: $10.00 = 1000)
     const priceInCents = Math.round(video.price * 100);
     
-    // Criar sessão de checkout
+    // Criar sessão de checkout dinâmica
     const checkoutData = await createCheckoutSession({
       price: priceInCents,
       productName: video.title,
