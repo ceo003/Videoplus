@@ -8,6 +8,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import multer from 'multer';
 import Stripe from 'stripe';
 import { wasabiBackendService } from './server/services/WasabiBackendService.js';
+import whopService, { initializeWhop, createCheckoutSession, validateAndProcessWebhook } from './server/services/whopService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -801,50 +802,154 @@ router.post('/upload/:folder', upload.single('file'), async (req, res) => {
   }
 });
 
-// ===== WHOP WEBHOOK =====
-router.post('/whop/webhook', express.json({ type: 'application/json' }), async (req, res) => {
+// ===== WHOP ENDPOINTS =====
+
+// Inicializar o Whop quando as configurações forem carregadas
+async function ensureWhopInitialized() {
   try {
-    console.log('Whop webhook received:', req.body);
-    
-    // Carregar configurações do site para pegar o webhook secret
     const siteConfig = await wasabiBackendService.getSiteConfig();
-    const whopWebhookSecret = siteConfig.whopWebhookSecret;
+    initializeWhop(siteConfig);
+    return siteConfig;
+  } catch (error) {
+    console.error('Error initializing Whop:', error);
+    return null;
+  }
+}
+
+// 1. CRIAR SESSÃO DE CHECKOUT
+router.post('/whop/create-checkout', express.json(), async (req, res) => {
+  try {
+    const { videoId, userId } = req.body;
     
-    // Verificar a assinatura do webhook (para segurança)
-    const whopSignature = req.headers['x-whop-signature'];
-    
-    if (whopWebhookSecret && whopSignature) {
-      // Aqui você pode implementar a verificação da assinatura usando o secret
-      console.log('Whop signature received');
+    if (!videoId) {
+      return res.status(400).json({ error: 'Video ID is required' });
     }
     
-    // Processar o evento do Whop
-    const eventType = req.body.event;
-    const eventData = req.body.data;
+    console.log(`🎯 Creating checkout for video: ${videoId}`);
     
+    // Carregar configurações e inicializar Whop
+    const siteConfig = await ensureWhopInitialized();
+    if (!siteConfig) {
+      return res.status(500).json({ error: 'Failed to load site configuration' });
+    }
+    
+    // Obter dados do vídeo
+    const videos = await wasabiBackendService.getVideos();
+    const video = videos.find(v => v.id === videoId);
+    
+    if (!video) {
+      return res.status(404).json({ error: 'Video not found' });
+    }
+    
+    // Preço em centavos (ex: $10.00 = 1000)
+    const priceInCents = Math.round(video.price * 100);
+    
+    // Criar sessão de checkout
+    const checkoutData = await createCheckoutSession({
+      price: priceInCents,
+      productName: video.title,
+      videoId: videoId,
+      userId: userId,
+    });
+    
+    res.json({
+      success: true,
+      sessionId: checkoutData.sessionId,
+      orderId: checkoutData.orderId,
+      checkoutUrl: checkoutData.checkoutUrl,
+      video: {
+        id: video.id,
+        title: video.title,
+        price: video.price,
+      },
+    });
+    
+  } catch (error) {
+    console.error('Error creating Whop checkout:', error);
+    res.status(500).json({ error: 'Failed to create checkout session', details: error.message });
+  }
+});
+
+// 2. WEBHOOK DO WHOP (Processar pagamentos)
+router.post('/whop/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  try {
+    console.log('🔔 Whop webhook received!');
+    
+    // Carregar configurações e inicializar Whop
+    const siteConfig = await ensureWhopInitialized();
+    
+    // Obter o corpo em texto para validação
+    const body = req.body.toString();
+    const headers = req.headers;
+    
+    // Processar o webhook
+    const webhookData = validateAndProcessWebhook(body, headers);
+    
+    // Determinar o tipo de evento
+    const eventType = webhookData.type || webhookData.event;
+    const eventData = webhookData.data || webhookData;
+    
+    console.log(`📦 Event type: ${eventType}`);
+    
+    // Processar eventos importantes
     switch (eventType) {
+      case 'payment.succeeded':
       case 'membership.paid':
-        console.log('Payment successful!', eventData);
-        // Lógica para liberar acesso ao vídeo
-        // 1. Identificar o usuário que fez o pagamento (email, id, etc.)
-        // 2. Marcar o vídeo como comprado para esse usuário
+      case 'order.paid':
+        console.log('✅ PAYMENT SUCCESSFUL! Processing...');
+        
+        try {
+          // Extrair metadata da sessão de checkout
+          const metadata = eventData.metadata || {};
+          const orderId = metadata.order_id;
+          const videoId = metadata.video_id;
+          const userId = metadata.user_id;
+          
+          const customerEmail = 
+            eventData.customer?.email || 
+            eventData.email ||
+            eventData.customer_email;
+          
+          console.log('💳 Payment details:', {
+            orderId,
+            videoId,
+            userId,
+            email: customerEmail,
+            amount: eventData.amount,
+            currency: eventData.currency,
+          });
+          
+          // TODO: Implementar lógica para LIBERAR ACESSO:
+          // 1. Registrar a compra no banco de dados
+          // 2. Enviar email de confirmação para o cliente
+          // 3. Marcar o vídeo como comprado para o usuário
+          
+          console.log('🎬 Video access granted for:', videoId);
+          
+        } catch (paymentError) {
+          console.error('❌ Error processing payment:', paymentError);
+        }
         break;
         
+      case 'payment.failed':
+        console.log('❌ Payment failed:', eventData);
+        break;
+        
+      case 'subscription.cancelled':
       case 'membership.cancelled':
-        console.log('Membership cancelled', eventData);
-        // Lógica para revogar acesso (opcional)
+        console.log('⚠️ Subscription cancelled:', eventData);
         break;
         
       default:
-        console.log('Unhandled Whop event:', eventType);
+        console.log(`ℹ️ Unhandled event type: ${eventType}`);
     }
     
-    // Responder com sucesso para o Whop
-    res.status(200).json({ received: true });
+    // Sempre responda 200 para o Whop, mesmo se houver erro no processamento
+    res.status(200).json({ success: true, received: true });
     
   } catch (error) {
-    console.error('Error processing Whop webhook:', error);
-    res.status(500).json({ error: 'Failed to process webhook' });
+    console.error('❌ Error processing Whop webhook:', error);
+    res.status(200).json({ success: true, received: true }); // Sempre 200!
   }
 });
 

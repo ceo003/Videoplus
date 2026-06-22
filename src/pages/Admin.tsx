@@ -180,6 +180,7 @@ const Admin: FC = () => {
   const [videoDescription, setVideoDescription] = useState('');
   const [videoPrice, setVideoPrice] = useState('');
   const [productLink, setProductLink] = useState('');
+  const [whopProductId, setWhopProductId] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -535,6 +536,7 @@ const Admin: FC = () => {
         description: videoDescription,
         price: price,
         productLink: productLink || undefined,
+        whopProductId: whopProductId || undefined,
         isActive: true
       };
 
@@ -588,6 +590,7 @@ const Admin: FC = () => {
       setVideoDescription('');
       setVideoPrice('');
       setProductLink('');
+      setWhopProductId('');
       setVideoFile(null);
       setThumbnailFile(null);
       setVideoDuration(null);
@@ -733,6 +736,7 @@ const Admin: FC = () => {
                               setVideoDescription(video.description);
                               setVideoPrice(video.price.toString());
                               setProductLink(video.product_link || '');
+                              setWhopProductId(video.whopProductId || '');
                               setVideoDuration(video.duration || null);
                               setEditingVideo(video.$id);
                               setShowVideoForm(true);
@@ -816,6 +820,15 @@ const Admin: FC = () => {
                     variant="outlined"
                     sx={{ mb: 2 }}
                   />
+                  
+                  <TextField
+                    fullWidth
+                    label="Whop Product ID (optional)"
+                    value={whopProductId}
+                    onChange={(e) => setWhopProductId(e.target.value)}
+                    variant="outlined"
+                    sx={{ mb: 2 }}
+                  />
                 </Grid>
                 
                 <Grid item xs={12} md={6}>
@@ -888,6 +901,7 @@ const Admin: FC = () => {
                     setVideoDescription('');
                     setVideoPrice('');
                     setProductLink('');
+                    setWhopProductId('');
                     setVideoFile(null);
                     setThumbnailFile(null);
                     setVideoDuration(null);
@@ -1057,6 +1071,32 @@ const Admin: FC = () => {
                       Cole esta URL na configuração de Webhook no painel do Whop.
                     </Typography>
                   </Alert>
+                  
+                  <Paper sx={{ p: 2, bgcolor: 'background.default' }}>
+                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+                      📋 Como Configurar o Whop:
+                    </Typography>
+                    <Box component="ol" sx={{ pl: 2, fontSize: '0.875rem' }}>
+                      <li sx={{ mb: 1 }}>
+                        <strong>Crie uma conta no Whop:</strong> Acesse <a href="https://whop.com" target="_blank" rel="noopener noreferrer">whop.com</a>
+                      </li>
+                      <li sx={{ mb: 1 }}>
+                        <strong>Crie um produto para cada vídeo:</strong> No painel do Whop, adicione produtos correspondentes aos seus vídeos
+                      </li>
+                      <li sx={{ mb: 1 }}>
+                        <strong>Copie o ID do produto:</strong> Cada produto no Whop tem um ID único (ex: prod_abc123)
+                      </li>
+                      <li sx={{ mb: 1 }}>
+                        <strong>Configure no seu site:</strong> Edite cada vídeo e cole o ID do produto no campo "Whop Product ID"
+                      </li>
+                      <li sx={{ mb: 1 }}>
+                        <strong>Configure o Webhook:</strong> No Whop, vá em Settings → Webhooks e adicione a URL acima
+                      </li>
+                      <li>
+                        <strong>Pronto!</strong> Os clientes poderão comprar seus vídeos via Whop!
+                      </li>
+                    </Box>
+                  </Paper>
                 </Grid>
 
                 {/* Email Settings */}

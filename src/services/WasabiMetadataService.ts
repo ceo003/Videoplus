@@ -14,6 +14,7 @@ export interface VideoData {
   createdAt: string;
   views: number;
   productLink?: string;
+  whopProductId?: string;
   isActive: boolean;
 }
 
