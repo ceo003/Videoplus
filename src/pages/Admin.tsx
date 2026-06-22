@@ -137,9 +137,6 @@ interface SiteConfig {
   paypal_me_username?: string;
   stripe_publishable_key: string;
   stripe_secret_key: string;
-  whop_company_api_key?: string;
-  whop_company_id?: string;
-  whop_webhook_secret?: string;
   telegram_username: string;
   video_list_title?: string;
   crypto?: string[];
@@ -180,7 +177,6 @@ const Admin: FC = () => {
   const [videoDescription, setVideoDescription] = useState('');
   const [videoPrice, setVideoPrice] = useState('');
   const [productLink, setProductLink] = useState('');
-  const [whopProductId, setWhopProductId] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -224,11 +220,6 @@ const Admin: FC = () => {
   const [wasabiRegion, setWasabiRegion] = useState('');
   const [wasabiBucket, setWasabiBucket] = useState('');
   const [wasabiEndpoint, setWasabiEndpoint] = useState('');
-  
-  // Whop config state
-  const [whopCompanyApiKey, setWhopCompanyApiKey] = useState('');
-  const [whopCompanyId, setWhopCompanyId] = useState('');
-  const [whopWebhookSecret, setWhopWebhookSecret] = useState('');
   
   // Available cryptocurrencies
   const cryptoCurrencies = [
@@ -367,9 +358,6 @@ const Admin: FC = () => {
           paypal_me_username: configData.paypalMeUsername,
           stripe_publishable_key: configData.stripePublishableKey,
           stripe_secret_key: configData.stripeSecretKey,
-          whop_company_api_key: configData.whopCompanyApiKey,
-          whop_company_id: configData.whopCompanyId,
-          whop_webhook_secret: configData.whopWebhookSecret,
           telegram_username: configData.telegramUsername,
           video_list_title: configData.videoListTitle,
           crypto: configData.crypto
@@ -381,9 +369,6 @@ const Admin: FC = () => {
         setPaypalMeUsername(config.paypal_me_username || '');
         setStripePublishableKey(config.stripe_publishable_key || '');
         setStripeSecretKey(config.stripe_secret_key || '');
-        setWhopCompanyApiKey(config.whop_company_api_key || '');
-        setWhopCompanyId(config.whop_company_id || '');
-        setWhopWebhookSecret(config.whop_webhook_secret || '');
         setTelegramUsername(config.telegram_username);
         setVideoListTitle(config.video_list_title || 'Available Videos');
         setCryptoWallets(config.crypto || []);
@@ -536,7 +521,6 @@ const Admin: FC = () => {
         description: videoDescription,
         price: price,
         productLink: productLink || undefined,
-        whopProductId: whopProductId || undefined,
         isActive: true
       };
 
@@ -590,7 +574,6 @@ const Admin: FC = () => {
       setVideoDescription('');
       setVideoPrice('');
       setProductLink('');
-      setWhopProductId('');
       setVideoFile(null);
       setThumbnailFile(null);
       setVideoDuration(null);
@@ -616,9 +599,6 @@ const Admin: FC = () => {
         paypalMeUsername: paypalMeUsername,
         stripePublishableKey: stripePublishableKey,
         stripeSecretKey: stripeSecretKey,
-        whopCompanyApiKey: whopCompanyApiKey,
-        whopCompanyId: whopCompanyId,
-        whopWebhookSecret: whopWebhookSecret,
         telegramUsername: telegramUsername,
         videoListTitle: videoListTitle,
         crypto: cryptoWallets,
@@ -736,7 +716,6 @@ const Admin: FC = () => {
                               setVideoDescription(video.description);
                               setVideoPrice(video.price.toString());
                               setProductLink(video.product_link || '');
-                              setWhopProductId(video.whopProductId || '');
                               setVideoDuration(video.duration || null);
                               setEditingVideo(video.$id);
                               setShowVideoForm(true);
@@ -820,15 +799,6 @@ const Admin: FC = () => {
                     variant="outlined"
                     sx={{ mb: 2 }}
                   />
-                  
-                  <TextField
-                    fullWidth
-                    label="Whop Product ID (optional)"
-                    value={whopProductId}
-                    onChange={(e) => setWhopProductId(e.target.value)}
-                    variant="outlined"
-                    sx={{ mb: 2 }}
-                  />
                 </Grid>
                 
                 <Grid item xs={12} md={6}>
@@ -901,7 +871,6 @@ const Admin: FC = () => {
                     setVideoDescription('');
                     setVideoPrice('');
                     setProductLink('');
-                    setWhopProductId('');
                     setVideoFile(null);
                     setThumbnailFile(null);
                     setVideoDuration(null);
@@ -1033,70 +1002,6 @@ const Admin: FC = () => {
                     variant="outlined"
                     sx={{ mb: 2 }}
                   />
-                  
-                  <TextField
-                    fullWidth
-                    label="Whop Company API Key"
-                    type="password"
-                    value={whopCompanyApiKey}
-                    onChange={(e) => setWhopCompanyApiKey(e.target.value)}
-                    variant="outlined"
-                    sx={{ mb: 2 }}
-                  />
-                  
-                  <TextField
-                    fullWidth
-                    label="Whop Company ID"
-                    value={whopCompanyId}
-                    onChange={(e) => setWhopCompanyId(e.target.value)}
-                    variant="outlined"
-                    sx={{ mb: 2 }}
-                  />
-                  
-                  <TextField
-                    fullWidth
-                    label="Whop Webhook Secret"
-                    type="password"
-                    value={whopWebhookSecret}
-                    onChange={(e) => setWhopWebhookSecret(e.target.value)}
-                    variant="outlined"
-                    sx={{ mb: 2 }}
-                  />
-                  
-                  <Alert severity="info" sx={{ mb: 2 }}>
-                    <Typography variant="body2">
-                      <strong>Whop Webhook URL:</strong> <code>{import.meta.env.VITE_API_URL || window.location.origin}/api/whop/webhook</code>
-                    </Typography>
-                    <Typography variant="caption">
-                      Cole esta URL na configuração de Webhook no painel do Whop.
-                    </Typography>
-                  </Alert>
-                  
-                  <Paper sx={{ p: 2, bgcolor: 'background.default' }}>
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
-                      📋 Como Configurar o Whop:
-                    </Typography>
-                    <Box component="ol" sx={{ pl: 2, fontSize: '0.875rem' }}>
-                      <li sx={{ mb: 1 }}>
-                        <strong>Crie uma conta no Whop:</strong> Acesse <a href="https://whop.com" target="_blank" rel="noopener noreferrer">whop.com</a>
-                      </li>
-                      <li sx={{ mb: 1 }}>
-                        <strong>Crie um produto para cada vídeo:</strong> No painel do Whop, adicione produtos correspondentes aos seus vídeos
-                      </li>
-                      <li sx={{ mb: 1 }}>
-                        <strong>Copie o ID do produto:</strong> Cada produto no Whop tem um ID único (ex: prod_abc123)
-                      </li>
-                      <li sx={{ mb: 1 }}>
-                        <strong>Configure no seu site:</strong> Edite cada vídeo e cole o ID do produto no campo "Whop Product ID"
-                      </li>
-                      <li sx={{ mb: 1 }}>
-                        <strong>Configure o Webhook:</strong> No Whop, vá em Settings → Webhooks e adicione a URL acima
-                      </li>
-                      <li>
-                        <strong>Pronto!</strong> Os clientes poderão comprar seus vídeos via Whop!
-                      </li>
-                    </Box>
-                  </Paper>
                 </Grid>
 
                 {/* Email Settings */}

@@ -37,8 +37,7 @@
     "@vercel/analytics": "^1.5.0",
     "@videojs/themes": "^1.0.1",
     "@vitejs/plugin-react": "^4.2.1",
-    "@whop/checkout": "^0.1.0",
-    "@whop/sdk": "^0.0.40",
+
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",

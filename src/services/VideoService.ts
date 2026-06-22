@@ -17,7 +17,6 @@ export interface Video {
   createdAt: string;
   views: number;
   product_link?: string;
-  whopProductId?: string;
 }
 
 // Sort options
@@ -106,8 +105,7 @@ export class VideoService {
       isPurchased: videoData.isPurchased || false,
       createdAt: videoData.createdAt,
       views: fakeViews,
-      product_link: videoData.productLink || '',
-      whopProductId: videoData.whopProductId || ''
+      product_link: videoData.productLink || ''
     };
   }
 

@@ -20,13 +20,12 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useAuth } from '../services/Auth';
 import { useSiteConfig } from '../context/SiteConfigContext';
 import { VideoService, Video } from '../services/VideoService';
-import WhopCheckout from '../components/WhopCheckout';
 
 const VideoPage: FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { telegramUsername, whopCompanyId } = useSiteConfig();
+  const { telegramUsername } = useSiteConfig();
   const [video, setVideo] = useState<Video | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -209,13 +208,7 @@ const VideoPage: FC = () => {
               </Typography>
             </Box>
             
-            <WhopCheckout
-              videoId={video.$id}
-              videoTitle={video.title}
-              price={video.price}
-              whopProductId={video.whopProductId}
-              disabled={hasPurchased}
-            />
+
             
             {telegramUsername && (
               <Button
